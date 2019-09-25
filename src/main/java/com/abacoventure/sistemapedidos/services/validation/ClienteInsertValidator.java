@@ -6,12 +6,20 @@ import java.util.List;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.abacoventure.sistemapedidos.domain.Cliente;
 import com.abacoventure.sistemapedidos.domain.enums.TipoCliente;
 import com.abacoventure.sistemapedidos.dto.ClienteNewDTO;
+import com.abacoventure.sistemapedidos.repositories.ClienteRepository;
 import com.abacoventure.sistemapedidos.resources.exception.FieldMessage;
 import com.abacoventure.sistemapedidos.services.validation.utils.BR;
 
 public class ClienteInsertValidator implements ConstraintValidator<ClienteInsert, ClienteNewDTO> {
+	
+	@Autowired
+	private ClienteRepository repo;
+	
 	@Override
 	public void initialize(ClienteInsert ann) {
 	}
@@ -29,7 +37,10 @@ public class ClienteInsertValidator implements ConstraintValidator<ClienteInsert
 			list.add(new FieldMessage("cpfOuCnpj", "CPF inválido"));
 		}
 
-		// inclua os testes aqui, inserindo erros na lista
+		Cliente aux = repo.findByEmail(objDto.getEmail());
+		if(aux != null) {
+			list.add(new FieldMessage("email", "Email já existente"));
+		}
 
 		for (FieldMessage e : list) {
 			context.disableDefaultConstraintViolation();
