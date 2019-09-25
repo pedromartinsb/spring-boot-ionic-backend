@@ -10,6 +10,6 @@ import com.abacoventure.sistemapedidos.domain.Cliente;
 @Repository
 public interface ClienteRepository extends JpaRepository<Cliente, Integer>{
 
-	@Transactional(readOnly=true)
+	@Transactional()
 	Cliente findByEmail(String email);
 }
