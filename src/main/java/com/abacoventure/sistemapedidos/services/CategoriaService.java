@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.abacoventure.sistemapedidos.domain.Categoria;
+import com.abacoventure.sistemapedidos.dto.CategoriaDTO;
 import com.abacoventure.sistemapedidos.repositories.CategoriaRepository;
 import com.abacoventure.sistemapedidos.services.exception.DataIntegrityException;
 import com.abacoventure.sistemapedidos.services.exception.ObjectNotFoundException;
@@ -57,6 +58,10 @@ public class CategoriaService {
 	public Page<Categoria> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		return repo.findAll(pageRequest);
+	}
+	
+	public Categoria fromDTO(CategoriaDTO objDto) {
+		return new Categoria(objDto.getId(), objDto.getNome());
 	}
 	
 }
