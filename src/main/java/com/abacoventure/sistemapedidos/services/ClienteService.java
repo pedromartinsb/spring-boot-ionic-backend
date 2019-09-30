@@ -16,11 +16,14 @@ import org.springframework.stereotype.Service;
 import com.abacoventure.sistemapedidos.domain.Cidade;
 import com.abacoventure.sistemapedidos.domain.Cliente;
 import com.abacoventure.sistemapedidos.domain.Endereco;
+import com.abacoventure.sistemapedidos.domain.enums.Perfil;
 import com.abacoventure.sistemapedidos.domain.enums.TipoCliente;
 import com.abacoventure.sistemapedidos.dto.ClienteDTO;
 import com.abacoventure.sistemapedidos.dto.ClienteNewDTO;
 import com.abacoventure.sistemapedidos.repositories.ClienteRepository;
 import com.abacoventure.sistemapedidos.repositories.EnderecoRepository;
+import com.abacoventure.sistemapedidos.security.UserSS;
+import com.abacoventure.sistemapedidos.services.exception.AuthorizationException;
 import com.abacoventure.sistemapedidos.services.exception.DataIntegrityException;
 import com.abacoventure.sistemapedidos.services.exception.ObjectNotFoundException;
 
@@ -37,6 +40,12 @@ public class ClienteService {
 	private EnderecoRepository enderecoRepository;
 	
 	public Cliente find(Integer id) {
+		
+		UserSS user = UserService.authenticated();
+		if(user==null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+			throw new AuthorizationException("Acesso negado");
+		}
+		
 		Optional<Cliente> obj = repo.findById(id);
 		return obj.orElseThrow(()->new ObjectNotFoundException(
 				"Objeto não encontrado! Id: " + id + ", Tipo: " + Cliente.class.getName()));
